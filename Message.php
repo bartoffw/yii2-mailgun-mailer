@@ -4,8 +4,8 @@ namespace bartoffw\mailgunmailer;
 
 use yii\mail\BaseMessage;
 use Mailgun\Messages\MessageBuilder;
-
-require_once __DIR__.'/../../mailgun/mailgun-php/src/Mailgun/Constants/Constants.php';
+use Mailgun\Constants\Api;
+use Mailgun\Constants\ExceptionMessages;
 
 /**
  * Message implements a message class based on Mailgun.
