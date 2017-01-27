@@ -256,8 +256,44 @@ class Message extends BaseMessage
 	 * @return Array message object
 	 */
 	public function getMessage()
+ 	{
+		return $this->fixEmails($this->getMessageBuilder()->getMessage());
+ 	}
+
+	protected function fixEmails($message)
 	{
-		return $this->getMessageBuilder()->getMessage();
+		$emailFields = ['from', 'reply-to', 'h:reply-to', 'to', 'cc', 'bcc'];
+		foreach ($emailFields as $emailField) {
+			if (!empty($message[$emailField]) && is_array($message[$emailField])) {
+				$newField = [];
+				foreach ($message[$emailField] as $emailEntry) {
+					if (is_array($emailEntry)) {
+						$emails = [];
+						foreach ($emailEntry as $key => $val) {
+							$emails[] = $this->convertEmail($val, $key);
+						}
+						$newField[] = implode(', ', $emails);
+					}
+					elseif (is_array($emailKey)) {
+						$newField[] = $this->convertEmail($emailEntry, array_shift($emailKey));
+					}
+					else {
+						$newField[] = $this->convertEmail($emailEntry, $emailKey);
+					}
+				}
+				$message[$emailField] = $newField;
+			}
+		}
+		return $message;
+	}
+
+ 	protected function convertEmail($name, $email)
+	{
+		if (is_string($name)) {
+      return $name . ' <' . $email . '>';
+    } else {
+      return $email;
+    }
 	}
 
 	/**
