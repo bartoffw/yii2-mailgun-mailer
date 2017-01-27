@@ -74,11 +74,11 @@ class Mailer extends BaseMailer
 		->addTags($this->tags);
 
 		Yii::info('Sending email', __METHOD__);
-		$response = $this->getMailgunMailer()->post(
-			"{$this->domain}/messages",
-			$message->getMessage(),
-			$message->getFiles()
-			);
+		$response = $this->getMailgunMailer()->sendMessage(
+			$this->domain, [
+				$message->getMessage(),
+				$message->getFiles()
+			]);
 
 		Yii::info('Response : '.print_r($response, true), __METHOD__);
 
