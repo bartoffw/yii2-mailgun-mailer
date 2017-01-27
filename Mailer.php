@@ -1,6 +1,6 @@
 <?php
 
-namespace katanyoo\mailgunmailer;
+namespace bartoffw\mailgunmailer;
 
 use Yii;
 use yii\base\InvalidConfigException;
@@ -33,7 +33,7 @@ class Mailer extends BaseMailer
 	 * [$messageClass description]
 	 * @var string message default class name.
 	 */
-	public $messageClass = 'katanyoo\mailgunmailer\Message';
+	public $messageClass = 'bartoffw\mailgunmailer\Message';
 
 	public $domain;
 	public $key;
@@ -75,8 +75,8 @@ class Mailer extends BaseMailer
 
 		Yii::info('Sending email', __METHOD__);
 		$response = $this->getMailgunMailer()->post(
-			"{$this->domain}/messages", 
-			$message->getMessage(), 
+			"{$this->domain}/messages",
+			$message->getMessage(),
 			$message->getFiles()
 			);
 

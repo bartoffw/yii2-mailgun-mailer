@@ -1,6 +1,6 @@
 <?php
 
-namespace katanyoo\mailgunmailer;
+namespace bartoffw\mailgunmailer;
 
 use yii\mail\BaseMessage;
 use Mailgun\Messages\MessageBuilder;
