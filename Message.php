@@ -204,7 +204,15 @@ class Message extends BaseMessage
 	 */
 	public function attachContent($content, array $options = [])
 	{
-		$this->getMessageBuilder()->addAttachment($content);
+		if (!empty($options['fileName'])) {
+      $fileName = '/tmp/'.$options['fileName'];
+      file_put_contents($fileName,$content);
+      $this->getMessageBuilder()->addAttachment($fileName, $options['fileName']);
+    } else {
+      $fileName = '/tmp/'.uniqid('email_attachment_');
+      file_put_contents('/tmp/'.uniqid('email_attachment_'),$content);
+      $this->getMessageBuilder()->addAttachment($fileName);
+    }
 		return $this;
 	}
 
@@ -266,7 +274,7 @@ class Message extends BaseMessage
 		foreach ($emailFields as $emailField) {
 			if (!empty($message[$emailField]) && is_array($message[$emailField])) {
 				$newField = [];
-				foreach ($message[$emailField] as $emailEntry) {
+				foreach ($message[$emailField] as $emailKey => $emailEntry) {
 					if (is_array($emailEntry)) {
 						$emails = [];
 						foreach ($emailEntry as $key => $val) {
@@ -281,19 +289,24 @@ class Message extends BaseMessage
 						$newField[] = $this->convertEmail($emailEntry, $emailKey);
 					}
 				}
-				$message[$emailField] = $newField;
+				if (in_array($emailField, ['h:reply-to', 'reply-to'])) {
+          $message[$emailField] = array_shift($newField);
+        }
+        else {
+          $message[$emailField] = $newField;
+        }
 			}
 		}
 		return $message;
 	}
 
- 	protected function convertEmail($name, $email)
+	protected function convertEmail($name, $email)
 	{
-		if (is_string($name)) {
-      return $name . ' <' . $email . '>';
-    } else {
-      return $email;
-    }
+		if (!empty($name) && !empty($email)) {
+			return $name . ' <' . $email . '>';
+		} else {
+			return $email ? $email : $name;
+		}
 	}
 
 	/**
